@@ -1596,6 +1596,60 @@ void writeArray(std::string& json, const char* name, const std::string& contents
 	append(json, "]");
 }
 
+//void writeExtensions(std::string& json, const ExtensionInfo* extensions, size_t count)
+//{
+//    bool used_extensions = false;
+//    bool required_extensions = false;
+//
+//    for (size_t i = 0; i < count; ++i) 
+//    {
+//        used_extensions |= extensions[i].used;
+//        required_extensions |= extensions[i].used && extensions[i].required;
+//    }
+//
+//    if (used_extensions)
+//    {
+//        comma(json);
+//        append(json, "\"extensionsUsed\":[");
+//        for (size_t i = 0; i < count; ++i)
+//        {
+//            if (extensions[i].used)
+//            {
+//                comma(json);
+//                append(json, "\"");
+//                append(json, extensions[i].name);
+//                append(json, "\"");
+//
+//                // Handle VRM extension separately
+//                if (strcmp(extensions[i].name, "VRM") == 0)
+//                {
+//                    append(json, ",{\"VRM\":{");
+//                    append(json, "}}");
+//                }
+//            }
+//        }
+//        append(json, "]");
+//    }
+//
+//    if (required_extensions)
+//    {
+//        comma(json);
+//        append(json, "\"extensionsRequired\":[");
+//        for (size_t i = 0; i < count; ++i)
+//        {
+//            if (extensions[i].used && extensions[i].required)
+//            {
+//                comma(json);
+//                append(json, "\"");
+//                append(json, extensions[i].name);
+//                append(json, "\"");
+//            }
+//        }
+//        append(json, "]");
+//    }
+//}
+
+
 void writeExtensions(std::string& json, const ExtensionInfo* extensions, size_t count)
 {
 	bool used_extensions = false;

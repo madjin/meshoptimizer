@@ -45,6 +45,7 @@ struct Transform
 
 struct Mesh
 {
+	std::string name;
 	int scene;
 	std::vector<cgltf_node*> nodes;
 	std::vector<Transform> instances;
@@ -60,6 +61,8 @@ struct Mesh
 	size_t targets;
 	std::vector<float> target_weights;
 	std::vector<const char*> target_names;
+
+	std::string extras;
 
 	std::vector<cgltf_material_mapping> variants;
 };
@@ -142,6 +145,8 @@ struct Settings
 	bool texture_ktx2;
 	bool texture_embed;
 	bool texture_ref;
+
+	bool vrm;
 
 	bool texture_pow2;
 	bool texture_flipy;

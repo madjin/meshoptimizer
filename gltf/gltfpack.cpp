@@ -830,9 +830,40 @@ static void process(cgltf_data* data, const char* input_path, const char* output
 	    {"KHR_lights_punctual", data->lights_count > 0, false},
 	    {"KHR_texture_basisu", !json_textures.empty() && settings.texture_ktx2, true},
 	    {"EXT_mesh_gpu_instancing", ext_instancing, true},
+	    {"VRM", settings.vrm, false},
 	};
 
 	writeExtensions(json, extensions, sizeof(extensions) / sizeof(extensions[0]));
+
+        // code from: https://github.com/zeux/meshoptimizer/pull/199/files
+        comma(json_extensions);
+        //append(json_extensions, "\"extensions\":{");
+        if (settings.vrm)
+        {
+    
+            std::string extension_vrm;
+            extension_vrm.assign("VRM");
+            for (size_t i = 0; i < data->data_extensions_count; ++i)
+            {
+                cgltf_extension extension = data->data_extensions[i];
+                if (!extension.name)
+                {
+                    continue;
+                }
+                std::string extension_tested;
+                extension_tested.assign(extension.name);
+                if (extension_vrm != extension_tested)
+                {
+                    break;
+                }
+                append(json_extensions, "\"");
+                append(json_extensions, extension.name);
+                append(json_extensions, "\":");
+                append(json_extensions, extension.data);
+            }
+        }
+        //append(json_extensions, "}");
+            
 
 	std::string json_views;
 	finalizeBufferViews(json_views, views, bin, settings.fallback ? &fallback : NULL, fallback_size);
@@ -965,7 +996,7 @@ int gltfpack(const char* input, const char* output, const char* report, Settings
 	std::string iext = getExtension(input);
 	std::string oext = output ? getExtension(output) : "";
 
-	if (iext == ".gltf" || iext == ".glb")
+	if (iext == ".gltf" || iext == ".glb" || iext == ".vrm")
 	{
 		const char* error = NULL;
 		data = parseGltf(input, meshes, animations, &error);
@@ -1004,9 +1035,14 @@ int gltfpack(const char* input, const char* output, const char* report, Settings
 	}
 #endif
 
-	if (oext == ".glb")
+	if (oext == ".glb" || oext == ".vrm")
 	{
 		settings.texture_embed = true;
+	}
+
+	if (oext == ".vrm")
+	{
+		settings.vrm = true;
 	}
 
 	if (data->images_count && !settings.texture_ref && !settings.texture_embed)
@@ -1085,7 +1121,7 @@ int gltfpack(const char* input, const char* output, const char* report, Settings
 			return 4;
 		}
 	}
-	else if (oext == ".glb")
+	else if (oext == ".glb" || oext == ".vrm")
 	{
 		std::string fbpath = output;
 		fbpath.replace(fbpath.size() - 4, 4, ".fallback.bin");
